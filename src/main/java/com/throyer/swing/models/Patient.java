@@ -8,7 +8,11 @@ import jakarta.persistence.Id;
 import jakarta.persistence.Table;
 import java.time.LocalDateTime;
 import static java.time.format.DateTimeFormatter.ofPattern;
+import lombok.Getter;
+import lombok.Setter;
 
+@Setter
+@Getter
 @Table(name = "patient")
 @Entity
 public class Patient {
@@ -27,46 +31,6 @@ public class Patient {
     
     @Column(name = "birth")
     private LocalDateTime birth;
-
-    public Long getId() {
-        return id;
-    }
-
-    public void setId(Long id) {
-        this.id = id;
-    }
-
-    public String getName() {
-        return name;
-    }
-
-    public void setName(String name) {
-        this.name = name;
-    }
-
-    public String getPhone() {
-        return phone;
-    }
-
-    public void setPhone(String phone) {
-        this.phone = phone;
-    }
-
-    public String getSex() {
-        return sex;
-    }
-
-    public void setSex(String sex) {
-        this.sex = sex;
-    }
-
-    public LocalDateTime getBirth() {
-        return birth;
-    }
-
-    public void setBirth(LocalDateTime birth) {
-        this.birth = birth;
-    }
 
     public Patient() {
     }

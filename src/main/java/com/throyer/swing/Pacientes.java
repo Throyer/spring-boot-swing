@@ -4,9 +4,14 @@
  */
 package com.throyer.swing;
 
+import com.throyer.swing.models.Patient;
 import com.throyer.swing.repositories.PatientRepository;
 import java.awt.EventQueue;
+import java.text.MessageFormat;
+import java.time.LocalDateTime;
+import java.util.List;
 import javax.swing.table.DefaultTableModel;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
 import org.springframework.boot.builder.SpringApplicationBuilder;
 
@@ -14,31 +19,23 @@ import org.springframework.boot.builder.SpringApplicationBuilder;
  *
  * @author Renato
  */
+@Slf4j
 @SpringBootApplication
 public class Pacientes extends javax.swing.JFrame {
-    
+
     private final PatientRepository repository;
-    
+
     /**
      * Creates new form TelaLogin
+     *
+     * @param repository
      */
     public Pacientes(PatientRepository repository) {
         initComponents();
-        
+
         this.repository = repository;
-        
-        var table = (DefaultTableModel) this.tablePatients.getModel();
-        var patients = repository.findAll();
-        
-        patients.forEach(patient -> table.addRow(patient.getPatientData()));
-        
-//        repository.saveAll(List.of(
-//            new Patient("Renato", "(43) 22556688", "M", LocalDateTime.now()),
-//            new Patient("Jubileu", "(43) 78587", "M", LocalDateTime.now()),
-//            new Patient("Creiçom", "(43) 22556688", "M", LocalDateTime.now()),
-//            new Patient("Clebersom", "(43) 78578", "M", LocalDateTime.now()),
-//            new Patient("Edinaldo", "(43) 248578", "M", LocalDateTime.now())
-//        ));
+
+        setPatients(repository.findAll());
     }
 
     /**
@@ -77,6 +74,12 @@ public class Pacientes extends javax.swing.JFrame {
 
         jLabel1.setText("Paciente");
 
+        patientName.addKeyListener(new java.awt.event.KeyAdapter() {
+            public void keyReleased(java.awt.event.KeyEvent evt) {
+                patientNameKeyReleased(evt);
+            }
+        });
+
         javax.swing.GroupLayout layout = new javax.swing.GroupLayout(getContentPane());
         getContentPane().setLayout(layout);
         layout.setHorizontalGroup(
@@ -103,12 +106,16 @@ public class Pacientes extends javax.swing.JFrame {
         pack();
     }// </editor-fold>//GEN-END:initComponents
 
+    private void patientNameKeyReleased(java.awt.event.KeyEvent evt) {//GEN-FIRST:event_patientNameKeyReleased
+        var search = patientName.getText();
+        var result = this.repository.findByNameContainingIgnoreCase(search);
+        setPatients(result);
+    }//GEN-LAST:event_patientNameKeyReleased
+
     /**
      * @param args the command line arguments
      */
     public static void main(String args[]) {
-//        SpringApplication.run(Pacientes.class, args);
-        
         var ctx = new SpringApplicationBuilder(Pacientes.class)
                 .headless(false).run(args);
 
@@ -141,6 +148,12 @@ public class Pacientes extends javax.swing.JFrame {
             var ex = ctx.getBean(Pacientes.class);
             ex.setVisible(true);
         });
+    }
+
+    public void setPatients(List<Patient> patients) {
+        var table = (DefaultTableModel) this.tablePatients.getModel();
+        table.setRowCount(0);
+        patients.forEach(patient -> table.addRow(patient.getPatientData()));
     }
 
     // Variables declaration - do not modify//GEN-BEGIN:variables
